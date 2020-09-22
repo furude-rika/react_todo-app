@@ -2,6 +2,8 @@ import React from 'react';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 
+import { FILTERS } from '../../constants';
+
 export const TodosFilter = ({
   activeTodos,
   clearCompleted,
@@ -23,7 +25,7 @@ export const TodosFilter = ({
           className={classNames({
             selected: todosStatus === 'all',
           })}
-          onClick={() => getTodos('all')}
+          onClick={() => getTodos(FILTERS.all)}
         >
           All
         </a>
@@ -35,7 +37,7 @@ export const TodosFilter = ({
           className={classNames({
             selected: todosStatus === 'active',
           })}
-          onClick={() => getTodos('active')}
+          onClick={() => getTodos(FILTERS.active)}
         >
           Active
         </a>
@@ -47,7 +49,7 @@ export const TodosFilter = ({
           className={classNames({
             selected: todosStatus === 'completed',
           })}
-          onClick={() => getTodos('completed')}
+          onClick={() => getTodos(FILTERS.completed)}
         >
           Completed
         </a>
@@ -58,9 +60,7 @@ export const TodosFilter = ({
       <button
         type="button"
         className="clear-completed"
-        onClick={() => {
-          clearCompleted();
-        }}
+        onClick={clearCompleted}
       >
         Clear completed
       </button>

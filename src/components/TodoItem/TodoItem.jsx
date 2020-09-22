@@ -48,7 +48,6 @@ export const TodoItem = ({
       <input
         type="text"
         className="edit"
-        value={newTitle}
         onChange={(event) => {
           setNewTitle(event.target.value);
         }}
