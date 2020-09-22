@@ -6,12 +6,10 @@ import { FILTERS } from './constants';
 
 function App() {
   const [todos, setTodos] = useState([]);
-  const [visibleTodos, setVisibleTodos] = useState([]);
+  const [visibleTodos, setVisibleTodos] = useState(FILTERS.all);
   const [todoTitle, setTodoTitle] = useState('');
-  const [todosStatus, setTodosStatus] = useState('');
 
   useEffect(() => {
-    setVisibleTodos(todos);
     localStorage.setItem('todos', JSON.stringify(todos));
   }, [todos]);
 
@@ -27,24 +25,18 @@ function App() {
     ]);
   };
 
-  const getTodos = (status) => {
-    switch (status) {
-      case FILTERS.all:
-        setVisibleTodos(todos);
-        setTodosStatus(FILTERS.all);
-        break;
+  const filteredTodos = todos.filter((todo) => {
+    switch (visibleTodos) {
       case FILTERS.completed:
-        setVisibleTodos(todos.filter(todo => todo.completed));
-        setTodosStatus(FILTERS.completed);
-        break;
+        return todo.completed;
+
       case FILTERS.active:
-        setVisibleTodos(todos.filter(todo => !todo.completed));
-        setTodosStatus(FILTERS.active);
-        break;
+        return !todo.completed;
+
       default:
-        break;
+        return todo;
     }
-  };
+  });
 
   const changeTodoStatus = (todoId) => {
     setTodos(todos.map((todo) => {
@@ -88,11 +80,11 @@ function App() {
   );
 
   const clearCompleted = () => {
-    setTodos(todos.filter(todo => !todo.completed));
+    setTodos(activeTodos);
   };
 
   const changeTitle = (todoId, newTitle) => {
-    const newTodos = todos.map((todo) => {
+    setTodos(todos.map((todo) => {
       if (todo.id === todoId) {
         return {
           ...todo,
@@ -101,9 +93,7 @@ function App() {
       }
 
       return todo;
-    });
-
-    setTodos(newTodos);
+    }));
   };
 
   return (
@@ -145,7 +135,7 @@ function App() {
         <label htmlFor="toggle-all">Mark all as complete</label>
 
         <TodoList
-          todos={visibleTodos}
+          todos={filteredTodos}
           changeStatus={changeTodoStatus}
           deleteTodo={deleteTodo}
           changeTitle={changeTitle}
@@ -158,8 +148,8 @@ function App() {
             activeTodos={activeTodos}
             completedTodos={completedTodos}
             clearCompleted={clearCompleted}
-            todosStatus={todosStatus}
-            getTodos={getTodos}
+            visibleTodos={visibleTodos}
+            setVisibleTodos={setVisibleTodos}
           />
         </footer>
       )}

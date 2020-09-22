@@ -8,8 +8,8 @@ export const TodosFilter = ({
   activeTodos,
   clearCompleted,
   completedTodos,
-  todosStatus,
-  getTodos,
+  visibleTodos,
+  setVisibleTodos,
 }) => (
   <>
     <span className="todo-count">
@@ -23,9 +23,9 @@ export const TodosFilter = ({
         <a
           href="#/"
           className={classNames({
-            selected: todosStatus === 'all',
+            selected: visibleTodos === 'all',
           })}
-          onClick={() => getTodos(FILTERS.all)}
+          onClick={() => setVisibleTodos(FILTERS.all)}
         >
           All
         </a>
@@ -35,9 +35,9 @@ export const TodosFilter = ({
         <a
           href="#/active"
           className={classNames({
-            selected: todosStatus === 'active',
+            selected: visibleTodos === 'active',
           })}
-          onClick={() => getTodos(FILTERS.active)}
+          onClick={() => setVisibleTodos(FILTERS.active)}
         >
           Active
         </a>
@@ -47,9 +47,9 @@ export const TodosFilter = ({
         <a
           href="#/completed"
           className={classNames({
-            selected: todosStatus === 'completed',
+            selected: visibleTodos === 'completed',
           })}
-          onClick={() => getTodos(FILTERS.completed)}
+          onClick={() => setVisibleTodos(FILTERS.completed)}
         >
           Completed
         </a>
@@ -72,8 +72,8 @@ TodosFilter.propTypes = {
   activeTodos: PropTypes.arrayOf(PropTypes.object),
   clearCompleted: PropTypes.func.isRequired,
   completedTodos: PropTypes.arrayOf(PropTypes.object),
-  todosStatus: PropTypes.string.isRequired,
-  getTodos: PropTypes.func.isRequired,
+  visibleTodos: PropTypes.string.isRequired,
+  setVisibleTodos: PropTypes.func.isRequired,
 };
 
 TodosFilter.defaultProps = {
