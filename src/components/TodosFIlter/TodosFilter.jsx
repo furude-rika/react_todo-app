@@ -23,7 +23,7 @@ export const TodosFilter = ({
         <a
           href="#/"
           className={classNames({
-            selected: visibleTodos === 'all',
+            selected: visibleTodos === FILTERS.all,
           })}
           onClick={() => setVisibleTodos(FILTERS.all)}
         >
@@ -35,7 +35,7 @@ export const TodosFilter = ({
         <a
           href="#/active"
           className={classNames({
-            selected: visibleTodos === 'active',
+            selected: visibleTodos === FILTERS.active,
           })}
           onClick={() => setVisibleTodos(FILTERS.active)}
         >
@@ -47,7 +47,7 @@ export const TodosFilter = ({
         <a
           href="#/completed"
           className={classNames({
-            selected: visibleTodos === 'completed',
+            selected: visibleTodos === FILTERS.completed,
           })}
           onClick={() => setVisibleTodos(FILTERS.completed)}
         >
