@@ -1,22 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { TodoList } from './components/TodoList';
 import { TodosFilter } from './components/TodosFIlter';
 
-const FILTERS = {
-  all: 'all',
-  completed: 'completed',
-  active: 'active',
-};
+import { FILTERS } from './constants';
 
 function App() {
   const [todos, setTodos] = useState([]);
-  const [visibleTodos, setVisibleTodos] = useState([]);
+  const [visibleTodos, setVisibleTodos] = useState(FILTERS.all);
   const [todoTitle, setTodoTitle] = useState('');
-  const [todosStatus, setTodosStatus] = useState('');
 
   useEffect(() => {
-    setTodos(todos);
-    setVisibleTodos(todos);
     localStorage.setItem('todos', JSON.stringify(todos));
   }, [todos]);
 
@@ -32,24 +25,18 @@ function App() {
     ]);
   };
 
-  const getTodos = (status) => {
-    switch (status) {
-      case FILTERS.all:
-        setVisibleTodos(todos);
-        setTodosStatus('all');
-        break;
+  const filteredTodos = todos.filter((todo) => {
+    switch (visibleTodos) {
       case FILTERS.completed:
-        setVisibleTodos([...todos].filter(todo => todo.completed));
-        setTodosStatus('completed');
-        break;
+        return todo.completed;
+
       case FILTERS.active:
-        setVisibleTodos([...todos].filter(todo => !todo.completed));
-        setTodosStatus('active');
-        break;
+        return !todo.completed;
+
       default:
-        break;
+        return todo;
     }
-  };
+  });
 
   const changeTodoStatus = (todoId) => {
     setTodos(todos.map((todo) => {
@@ -64,8 +51,10 @@ function App() {
     }));
   };
 
+  const areAllCompleted = todos.every(todo => todo.completed);
+
   const toggleAll = () => {
-    if (todos.every(todo => todo.completed)) {
+    if (areAllCompleted) {
       setTodos(todos.map(todo => ({
         ...todo,
         completed: false,
@@ -78,20 +67,24 @@ function App() {
     }
   };
 
-  const activeTodos = [...todos].filter(todo => !todo.completed);
+  const activeTodos = useMemo(
+    () => todos.filter(todo => !todo.completed), [todos],
+  );
 
   const deleteTodo = (todoId) => {
-    setTodos([...todos].filter(todo => todo.id !== todoId));
+    setTodos(todos.filter(todo => todo.id !== todoId));
   };
 
-  const completedTodos = [...todos].filter(todo => todo.completed);
+  const completedTodos = useMemo(
+    () => todos.filter(todo => todo.completed), [todos],
+  );
 
   const clearCompleted = () => {
-    setTodos([...todos].filter(todo => !todo.completed));
+    setTodos(activeTodos);
   };
 
   const changeTitle = (todoId, newTitle) => {
-    const newTodos = todos.map((todo) => {
+    setTodos(todos.map((todo) => {
       if (todo.id === todoId) {
         return {
           ...todo,
@@ -100,9 +93,7 @@ function App() {
       }
 
       return todo;
-    });
-
-    setTodos(newTodos);
+    }));
   };
 
   return (
@@ -137,20 +128,17 @@ function App() {
         <input
           type="checkbox"
           id="toggle-all"
-          checked={todos.length > 0 && todos.every(todo => todo.completed)}
+          checked={todos.length > 0 && areAllCompleted}
           className="toggle-all"
-          onChange={() => {
-            toggleAll();
-          }}
+          onChange={toggleAll}
         />
         <label htmlFor="toggle-all">Mark all as complete</label>
 
         <TodoList
-          todos={visibleTodos}
+          todos={filteredTodos}
           changeStatus={changeTodoStatus}
           deleteTodo={deleteTodo}
           changeTitle={changeTitle}
-
         />
       </section>
 
@@ -160,8 +148,8 @@ function App() {
             activeTodos={activeTodos}
             completedTodos={completedTodos}
             clearCompleted={clearCompleted}
-            todosStatus={todosStatus}
-            getTodos={getTodos}
+            visibleTodos={visibleTodos}
+            setVisibleTodos={setVisibleTodos}
           />
         </footer>
       )}

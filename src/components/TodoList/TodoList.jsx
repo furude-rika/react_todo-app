@@ -13,9 +13,9 @@ export const TodoList = ({
       <TodoItem
         key={todo.id}
         {...todo}
-        changeStatus={changeStatus}
         deleteTodo={deleteTodo}
         changeTitle={changeTitle}
+        changeStatus={changeStatus}
       />
     ))}
   </ul>

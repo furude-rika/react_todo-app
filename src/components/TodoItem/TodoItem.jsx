@@ -45,31 +45,33 @@ export const TodoItem = ({
           }}
         />
       </div>
-      <input
-        type="text"
-        className="edit"
-        value={newTitle}
-        onChange={(event) => {
-          setNewTitle(event.target.value);
-        }}
-        onKeyDown={(event) => {
-          if (event.key === 'Enter' && newTitle.trim()) {
-            changeTitle(id, newTitle);
+      {editing && (
+        <input
+          autoFocus
+          type="text"
+          className="edit"
+          onChange={(event) => {
+            setNewTitle(event.target.value);
+          }}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter' && newTitle.trim()) {
+              changeTitle(id, newTitle);
 
-            setNewTitle('');
-            setEditing(false);
-          }
+              setNewTitle('');
+              setEditing(false);
+            }
 
-          if (event.key === 'Enter' && newTitle.trim() === '') {
-            deleteTodo(id);
-          }
+            if (event.key === 'Enter' && newTitle.trim() === '') {
+              deleteTodo(id);
+            }
 
-          if (event.key === 'Escape') {
-            setNewTitle('');
-            setEditing(false);
-          }
-        }}
-      />
+            if (event.key === 'Escape') {
+              setNewTitle('');
+              setEditing(false);
+            }
+          }}
+        />
+      )}
     </li>
   );
 };

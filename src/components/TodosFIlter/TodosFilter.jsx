@@ -2,12 +2,14 @@ import React from 'react';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 
+import { FILTERS } from '../../constants';
+
 export const TodosFilter = ({
   activeTodos,
   clearCompleted,
   completedTodos,
-  todosStatus,
-  getTodos,
+  visibleTodos,
+  setVisibleTodos,
 }) => (
   <>
     <span className="todo-count">
@@ -21,9 +23,9 @@ export const TodosFilter = ({
         <a
           href="#/"
           className={classNames({
-            selected: todosStatus === 'all',
+            selected: visibleTodos === FILTERS.all,
           })}
-          onClick={() => getTodos('all')}
+          onClick={() => setVisibleTodos(FILTERS.all)}
         >
           All
         </a>
@@ -33,9 +35,9 @@ export const TodosFilter = ({
         <a
           href="#/active"
           className={classNames({
-            selected: todosStatus === 'active',
+            selected: visibleTodos === FILTERS.active,
           })}
-          onClick={() => getTodos('active')}
+          onClick={() => setVisibleTodos(FILTERS.active)}
         >
           Active
         </a>
@@ -45,9 +47,9 @@ export const TodosFilter = ({
         <a
           href="#/completed"
           className={classNames({
-            selected: todosStatus === 'completed',
+            selected: visibleTodos === FILTERS.completed,
           })}
-          onClick={() => getTodos('completed')}
+          onClick={() => setVisibleTodos(FILTERS.completed)}
         >
           Completed
         </a>
@@ -58,9 +60,7 @@ export const TodosFilter = ({
       <button
         type="button"
         className="clear-completed"
-        onClick={() => {
-          clearCompleted();
-        }}
+        onClick={clearCompleted}
       >
         Clear completed
       </button>
@@ -72,8 +72,8 @@ TodosFilter.propTypes = {
   activeTodos: PropTypes.arrayOf(PropTypes.object),
   clearCompleted: PropTypes.func.isRequired,
   completedTodos: PropTypes.arrayOf(PropTypes.object),
-  todosStatus: PropTypes.string.isRequired,
-  getTodos: PropTypes.func.isRequired,
+  visibleTodos: PropTypes.string.isRequired,
+  setVisibleTodos: PropTypes.func.isRequired,
 };
 
 TodosFilter.defaultProps = {
