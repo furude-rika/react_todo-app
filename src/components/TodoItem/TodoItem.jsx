@@ -50,14 +50,22 @@ export const TodoItem = ({
           autoFocus
           type="text"
           className="edit"
+          value={newTitle}
           onChange={(event) => {
             setNewTitle(event.target.value);
+          }}
+          onBlur={() => {
+            if (newTitle.trim()) {
+              changeTitle(id, newTitle);
+            } else {
+              deleteTodo(id);
+            }
+
+            setEditing(false);
           }}
           onKeyDown={(event) => {
             if (event.key === 'Enter' && newTitle.trim()) {
               changeTitle(id, newTitle);
-
-              setNewTitle('');
               setEditing(false);
             }
 
@@ -66,7 +74,7 @@ export const TodoItem = ({
             }
 
             if (event.key === 'Escape') {
-              setNewTitle('');
+              setNewTitle(title);
               setEditing(false);
             }
           }}

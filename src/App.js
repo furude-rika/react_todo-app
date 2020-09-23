@@ -51,7 +51,9 @@ function App() {
     }));
   };
 
-  const areAllCompleted = todos.every(todo => todo.completed);
+  const areAllCompleted = useMemo(
+    () => todos.every(todo => todo.completed), [todos],
+  );
 
   const toggleAll = () => {
     if (areAllCompleted) {
