@@ -1,17 +1,49 @@
-import React, { useState } from 'react';
+import React from 'react';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 
-export const TodoItem = ({
-  id,
-  title,
-  completed,
-  changeStatus,
-  deleteTodo,
+import { useSelector, useDispatch } from 'react-redux';
+import {
+  setEditing,
+  setNewTitle,
   changeTitle,
-}) => {
-  const [newTitle, setNewTitle] = useState(title);
-  const [editing, setEditing] = useState(false);
+  deleteTodo,
+  changeTodoStatus,
+} from '../../redux/store';
+
+export const TodoItem = ({ id, title, completed, editing }) => {
+  const newTitle = useSelector(state => state.newTitle);
+  const dispatch = useDispatch();
+
+  const changeTitleFunc = (todoId, value) => {
+    const action = changeTitle(todoId, value);
+
+    dispatch(action);
+  };
+
+  const setNewTitleFunc = (todoId, value) => {
+    const action = setNewTitle(todoId, value);
+
+    dispatch(action);
+  };
+
+  const setEditingFunc = (status, todoId) => {
+    const action = setEditing(status, todoId);
+
+    dispatch(action);
+  };
+
+  const deleteTodoFunc = (todoId) => {
+    const action = deleteTodo(todoId);
+
+    dispatch(action);
+  };
+
+  const changeTodoStatusFunc = (todoId) => {
+    const action = changeTodoStatus(todoId);
+
+    dispatch(action);
+  };
 
   return (
     <li
@@ -27,12 +59,12 @@ export const TodoItem = ({
           checked={completed}
           className="toggle"
           onChange={() => {
-            changeStatus(id);
+            changeTodoStatusFunc(id);
           }}
         />
         <label
           onDoubleClick={() => {
-            setEditing(true);
+            setEditingFunc(true, id);
           }}
         >
           {title}
@@ -41,7 +73,7 @@ export const TodoItem = ({
           type="button"
           className="destroy"
           onClick={() => {
-            deleteTodo(id);
+            deleteTodoFunc(id);
           }}
         />
       </div>
@@ -52,30 +84,30 @@ export const TodoItem = ({
           className="edit"
           value={newTitle}
           onChange={(event) => {
-            setNewTitle(event.target.value);
+            setNewTitleFunc(event.target.value);
           }}
           onBlur={() => {
             if (newTitle.trim()) {
-              changeTitle(id, newTitle);
+              changeTitleFunc(id, newTitle);
             } else {
-              deleteTodo(id);
+              deleteTodoFunc(id);
             }
 
-            setEditing(false);
+            setEditingFunc(false, id);
           }}
           onKeyDown={(event) => {
             if (event.key === 'Enter' && newTitle.trim()) {
-              changeTitle(id, newTitle);
-              setEditing(false);
+              changeTitleFunc(id, newTitle);
+              setEditingFunc(false, id);
             }
 
             if (event.key === 'Enter' && newTitle.trim() === '') {
-              deleteTodo(id);
+              deleteTodoFunc(id);
             }
 
             if (event.key === 'Escape') {
-              setNewTitle(title);
-              setEditing(false);
+              changeTitleFunc(title);
+              setEditingFunc(false, id);
             }
           }}
         />
@@ -88,7 +120,5 @@ TodoItem.propTypes = {
   id: PropTypes.number.isRequired,
   title: PropTypes.string.isRequired,
   completed: PropTypes.bool.isRequired,
-  changeStatus: PropTypes.func.isRequired,
-  deleteTodo: PropTypes.func.isRequired,
-  changeTitle: PropTypes.func.isRequired,
+  editing: PropTypes.bool.isRequired,
 };

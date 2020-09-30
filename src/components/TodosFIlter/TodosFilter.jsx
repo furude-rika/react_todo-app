@@ -9,7 +9,7 @@ export const TodosFilter = ({
   clearCompleted,
   completedTodos,
   visibleTodos,
-  setVisibleTodos,
+  filterTodos,
 }) => (
   <>
     <span className="todo-count">
@@ -25,7 +25,7 @@ export const TodosFilter = ({
           className={classNames({
             selected: visibleTodos === FILTERS.all,
           })}
-          onClick={() => setVisibleTodos(FILTERS.all)}
+          onClick={() => filterTodos(FILTERS.all)}
         >
           All
         </a>
@@ -37,7 +37,7 @@ export const TodosFilter = ({
           className={classNames({
             selected: visibleTodos === FILTERS.active,
           })}
-          onClick={() => setVisibleTodos(FILTERS.active)}
+          onClick={() => filterTodos(FILTERS.active)}
         >
           Active
         </a>
@@ -49,7 +49,7 @@ export const TodosFilter = ({
           className={classNames({
             selected: visibleTodos === FILTERS.completed,
           })}
-          onClick={() => setVisibleTodos(FILTERS.completed)}
+          onClick={() => filterTodos(FILTERS.completed)}
         >
           Completed
         </a>
@@ -73,7 +73,7 @@ TodosFilter.propTypes = {
   clearCompleted: PropTypes.func.isRequired,
   completedTodos: PropTypes.arrayOf(PropTypes.object),
   visibleTodos: PropTypes.string.isRequired,
-  setVisibleTodos: PropTypes.func.isRequired,
+  filterTodos: PropTypes.func.isRequired,
 };
 
 TodosFilter.defaultProps = {

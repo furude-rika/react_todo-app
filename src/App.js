@@ -1,28 +1,27 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useMemo } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { TodoList } from './components/TodoList';
 import { TodosFilter } from './components/TodosFIlter';
 
 import { FILTERS } from './constants';
+import {
+  addTodo,
+  filterTodos,
+  toggleAll,
+  clearCompleted,
+  setTitle,
+} from './redux/todos';
 
 function App() {
-  const [todos, setTodos] = useState([]);
-  const [visibleTodos, setVisibleTodos] = useState(FILTERS.all);
-  const [todoTitle, setTodoTitle] = useState('');
-
-  useEffect(() => {
-    localStorage.setItem('todos', JSON.stringify(todos));
-  }, [todos]);
+  const todos = useSelector(state => state.todos);
+  const visibleTodos = useSelector(state => state.visibleTodos);
+  const todoTitle = useSelector(state => state.title);
+  const dispatch = useDispatch();
 
   const createTodo = (title) => {
-    setTodos([
-      ...todos,
-      {
-        title,
-        id: +new Date(),
-        completed: false,
-        editing: false,
-      },
-    ]);
+    const action = addTodo(title);
+
+    dispatch(action);
   };
 
   const filteredTodos = todos.filter((todo) => {
@@ -38,64 +37,40 @@ function App() {
     }
   });
 
-  const changeTodoStatus = (todoId) => {
-    setTodos(todos.map((todo) => {
-      if (todo.id === todoId) {
-        return {
-          ...todo,
-          completed: !todo.completed,
-        };
-      }
+  const filterTodosFunc = (filter) => {
+    const action = filterTodos(filter);
 
-      return todo;
-    }));
+    dispatch(action);
   };
 
   const areAllCompleted = useMemo(
     () => todos.every(todo => todo.completed), [todos],
   );
 
-  const toggleAll = () => {
-    if (areAllCompleted) {
-      setTodos(todos.map(todo => ({
-        ...todo,
-        completed: false,
-      })));
-    } else {
-      setTodos(todos.map(todo => ({
-        ...todo,
-        completed: true,
-      })));
-    }
+  const toggleAllFunc = (status) => {
+    const action = toggleAll(status);
+
+    dispatch(action);
   };
 
   const activeTodos = useMemo(
     () => todos.filter(todo => !todo.completed), [todos],
   );
 
-  const deleteTodo = (todoId) => {
-    setTodos(todos.filter(todo => todo.id !== todoId));
-  };
-
   const completedTodos = useMemo(
     () => todos.filter(todo => todo.completed), [todos],
   );
 
-  const clearCompleted = () => {
-    setTodos(activeTodos);
+  const clearCompletedFunc = () => {
+    const action = clearCompleted();
+
+    dispatch(action);
   };
 
-  const changeTitle = (todoId, newTitle) => {
-    setTodos(todos.map((todo) => {
-      if (todo.id === todoId) {
-        return {
-          ...todo,
-          title: newTitle,
-        };
-      }
+  const setTitleFunc = (title) => {
+    const action = setTitle(title);
 
-      return todo;
-    }));
+    dispatch(action);
   };
 
   return (
@@ -114,12 +89,12 @@ function App() {
             value={todoTitle}
             placeholder="What needs to be done?"
             onChange={(event) => {
-              setTodoTitle(event.target.value);
+              setTitleFunc(event.target.value);
             }}
             onKeyDown={(event) => {
               if (event.key === 'Enter' && todoTitle.trim()) {
                 createTodo(todoTitle.trim());
-                setTodoTitle('');
+                setTitleFunc('');
               }
             }}
           />
@@ -132,26 +107,23 @@ function App() {
           id="toggle-all"
           checked={todos.length > 0 && areAllCompleted}
           className="toggle-all"
-          onChange={toggleAll}
+          onChange={() => {
+            toggleAllFunc(areAllCompleted);
+          }}
         />
         <label htmlFor="toggle-all">Mark all as complete</label>
 
-        <TodoList
-          todos={filteredTodos}
-          changeStatus={changeTodoStatus}
-          deleteTodo={deleteTodo}
-          changeTitle={changeTitle}
-        />
+        <TodoList todos={filteredTodos} />
       </section>
 
       {todos.length > 0 && (
         <footer className="footer">
           <TodosFilter
+            filterTodos={filterTodosFunc}
             activeTodos={activeTodos}
             completedTodos={completedTodos}
-            clearCompleted={clearCompleted}
+            clearCompleted={clearCompletedFunc}
             visibleTodos={visibleTodos}
-            setVisibleTodos={setVisibleTodos}
           />
         </footer>
       )}
